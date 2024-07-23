@@ -89,9 +89,13 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Dependencies
 
-- Dapper (>= 2.1.28)
+- Dapper (>= 2.1.35)
 
 ## Support
 
 If you encounter any issues or have questions, please file an issue on the GitHub repository.
+
+## Build Status
+![Build and Test](https://github.com/guanghuang/DapperRelMapper/actions/workflows/build.yml/badge.svg)
+![Publish to NuGet](https://github.com/guanghuang/DapperRelMapper/actions/workflows/publish.yml/badge.svg)
 
