@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <AssemblyName>DapperRelMapper</AssemblyName>
+        <Title>Dapper Relationship Mapper</Title>
+        <Description>An extension for Dapper that facilitates mapping queries to relationships, eliminating the need for boilerplate code.</Description>
+        <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
+        <LangVersion>10.0</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>Kvr.Dapper</RootNamespace>
+        <Nullable>enable</Nullable>
+        <Version>0.1.0</Version>
+    </PropertyGroup>
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.35" />
+    </ItemGroup>
+</Project>
