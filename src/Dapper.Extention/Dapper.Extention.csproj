@@ -1,16 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <AssemblyName>DapperRelMapper</AssemblyName>
+        <PackageId>Kvr.DapperRelMapper</PackageId>
         <Title>Dapper Relationship Mapper</Title>
         <Description>An extension for Dapper that facilitates mapping queries to relationships, eliminating the need for boilerplate code.</Description>
         <TargetFrameworks>netstandard2.0;net5.0;net6.0;net7.0</TargetFrameworks>
         <LangVersion>10.0</LangVersion>
+        <Authors>Guang Huang</Authors>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>Kvr.Dapper</RootNamespace>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <RepositoryType>git</RepositoryType>
+        <PackageProjectUrl>https://github.com/guanghuang/DapperRelMapper</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/guanghuang/DapperRelMapper</RepositoryUrl>
+        <PackageTags>Dapper;Query;Mapper</PackageTags>
         <Nullable>enable</Nullable>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.35" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="../../License.txt">
+            <Pack>true</Pack>
+            <PackagePath></PackagePath>
+            <Visible>True</Visible>
+        </None>
+        <None Include="../../README.md">
+            <Pack>true</Pack>
+            <PackagePath></PackagePath>
+            <Visible>True</Visible>
+        </None>
     </ItemGroup>
 </Project>
