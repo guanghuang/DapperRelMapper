@@ -16,7 +16,7 @@
         <RepositoryUrl>https://github.com/guanghuang/DapperRelMapper</RepositoryUrl>
         <PackageTags>Dapper;Query;Mapper</PackageTags>
         <Nullable>enable</Nullable>
-        <Version>0.1.1</Version>
+        <Version>0.1.2</Version>
     </PropertyGroup>
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.35" />

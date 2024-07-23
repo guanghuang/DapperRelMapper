@@ -55,7 +55,7 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
         {
             var result = (TReturn)objects[0];
             var key = Utils.GetPropertyValue(result, _keySelector);
-            var newRecord = lookup.ContainsKey(key);
+            var newRecord = !lookup.ContainsKey(key);
             if (newRecord)
             {
                 lookup.Add(key, result);
