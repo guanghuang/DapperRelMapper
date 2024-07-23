@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Extention", "src\Dapper.Extention\Dapper.Extention.csproj", "{0756203E-F47C-4FA2-ADE3-FC44F50BBB03}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dapper.Extension", "src\Dapper.Extension\Dapper.Extension.csproj", "{0756203E-F47C-4FA2-ADE3-FC44F50BBB03}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
