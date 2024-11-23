@@ -15,6 +15,7 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     private readonly IDbConnection _connection;
     private readonly LambdaExpression[] _expressions;
     private readonly Expression<Func<TReturn, TKey>> _keySelector;
+    private string? _splitOn;
 
     /// <summary>
     /// Initializes a new instance of SqlMapperWrapper
@@ -94,10 +95,33 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
 
             callbackAfterMapRow?.Invoke(objects);
             return result;
-        }, param, transaction, buffered, splitOn, commandTimeout, commandType);
+        }, param, transaction, buffered, _splitOn ?? splitOn, commandTimeout, commandType);
         return lookup.Values;
     }
+    
+    /// <summary>
+    /// Sets the splitOn parameter for the query
+    /// </summary>
+    /// <param name="expressions">Expressions defining the splitOn fields</param>
+    /// <returns>The SqlMapperWrapper instance</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn(params LambdaExpression[] expressions)
+    {
+        _splitOn = (_splitOn == null ? "" : _splitOn + ",") + string.Join(",", expressions.Select(e => e.GetMemberExpression().Member.Name));
+        return this;
+    }
 
+    /// <summary>
+    /// Sets the splitOn parameter for the query
+    /// </summary>
+    /// <typeparam name="T">The type of the expression</typeparam>
+    /// <param name="expression">The expression defining the splitOn field</param>
+    /// <returns>The SqlMapperWrapper instance</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T>(Expression<Func<T, object>> expression)
+    {
+        _splitOn = (_splitOn == null ? "" : _splitOn + ",") + expression.GetMemberExpression().Member.Name;
+        return this;
+    }
+    
     /// <summary>
     /// Executes the query and maps the results with a single child relationship
     /// </summary>
