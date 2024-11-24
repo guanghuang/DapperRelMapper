@@ -8,19 +8,19 @@ A lightweight extension for Dapper that provides additional functionality and si
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start Guide](#quick-start-guide)
-  - [Entity Setup](#entity-setup)
-  - [Traditional Approach](#traditional-approach)
-  - [Using DapperRelMapper](#using-dapperrelMapper)
-  - [Using SplitOn](#using-spliton)
+    - [Entity Setup](#entity-setup)
+    - [Traditional Approach](#traditional-approach)
+    - [Using DapperRelMapper](#using-dapperrelMapper)
+    - [Using SplitOn](#using-spliton)
 - [Usage](#usage)
-  - [Configuring Mappers](#configuring-mappers)
-  - [Using SplitOn Method](#using-spliton-method)
-  - [Query Execution](#query-execution)
-  - [Callback Support](#callback-support)
+    - [Configuring Mappers](#configuring-mappers)
+    - [Using SplitOn Method](#using-spliton-method)
+    - [Query Execution](#query-execution)
+    - [Callback Support](#callback-support)
 - [Best Practices](#best-practices)
 - [Limitations](#limitations)
 - [Troubleshooting](#troubleshooting)
-  - [Common Issues](#common-issues)
+    - [Common Issues](#common-issues)
 - [Supported Frameworks](#supported-frameworks)
 - [Version History](#version-history)
 - [License](#license)
@@ -187,30 +187,32 @@ await connection.ConfigMapper<Customer, int>(customer => customer.Id, customer =
 ```
 ## Usage
 1. Configure the mapping relationship between the parent and child entities using the `ConfigMapper` method.
- * ```csharp
+* ```csharp
    public static SqlMapperWrapper<TReturn, TKey> ConfigMapper<TReturn, TKey>(
         this IDbConnection connection,
         Expression<Func<TReturn, TKey>> keySelector,
         params LambdaExpression[] expressions)
    ```
-   Usage:
-```csharp
+
+  Usage:
+```
 connection.ConfigMapper<Customer, int>(customer => customer.Id, (Customer customer) => customer.Orders, (Customer customer) => customer.Address, 
     (Customer customer) => customer.PhoneNumbers)
-```
- * The above `ConfigMapper` needs to input qualifier for lamda function. The following `ConfigMapper` will simplify the input (Here assumes that all the lamda function input is the parent entity):
+ ```
+* The above `ConfigMapper` needs to input qualifier for lamda function. The following `ConfigMapper` will simplify the input (Here assumes that all the lamda function input is the parent entity):
 ```csharp
 public static SqlMapperWrapper<TReturn, TKey> ConfigMapper<TReturn, TKey>(
         this IDbConnection connection,
         Expression<Func<TReturn, TKey>> keySelector,
         params Expression<Func<TReturn, object>>[] expressions)
 ```
-    Usage:
+
+Usage:
 ```csharp
 connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
     customer => customer.PhoneNumbers)
 ```
- * Here also have 10 strong types of `ConfigMapper` method, which can be used to specify the relationship between the parent and child entities.
+* Here also have 10 strong types of `ConfigMapper` method, which can be used to specify the relationship between the parent and child entities.
     * `public static SqlMapperWrapper<TReturn, TKey> ConfigMapper<TReturn, TKey, TFirstChild>(
         this IDbConnection connection, Expression<Func<TReturn, TKey>> keySelector,
         Expression<Func<TReturn, TFirstChild>> firstChildSelector) where TFirstChild : class;`
@@ -221,7 +223,7 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
     * ....
 
 2. Use the `SplitOn` method to specify the splitOn parameters for the query.(Optional)
-We could use the `SplitOn` method to generate the `splitOn` parameter instead of writing them manually to reduce the risk of typos.
+   We could use the `SplitOn` method to generate the `splitOn` parameter instead of writing them manually to reduce the risk of typos.
 ```csharp
 connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
     customer => customer.PhoneNumbers).SplitOn((Order order) => order.OrderId, (CustomerAddress address) => address.AddressId, 
@@ -235,30 +237,38 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 ```
 It will generate the `splitOn` parameter like this: `splitOn: "Id,OrderId,AddressId,PhoneNumberId"` passed to the Dapper's `QueryAsync` method.
 Note: The `SplitOn` methods will override the `splitOn` parameter in the `QueryAsync` method.
+
 3. Use the `QueryAsync` method to execute the query and retrieve the data.
-Use the same method parameters as Dapper's `QueryAsync` method except the `mapper` parameter, `splitOn` parameter if you use the `SplitOn` method.
+   Use the same method parameters as Dapper's `QueryAsync` method except the `mapper` parameter, `splitOn` parameter if you use the `SplitOn` method.
 ```
 await connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
     customer => customer.PhoneNumbers).QueryAsync(sql, new { customerId = 1 }, splitOn: "Id,OrderId,AddressId,PhoneNumberId");
 ```
 Here also have 10 strong types of `QueryAsync` method, which can be used to specify the relationship between the parent and child entities.
-    * `public async Task<IEnumerable<TReturn>> QueryAsync<TFirstChild>(string sql, object? param = null,
+* `public async Task<IEnumerable<TReturn>> QueryAsync<TFirstChild>(string sql, object? param = null,
         IDbTransaction? transaction = null, bool buffered = true,
         string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null,
         Action<TReturn, TFirstChild>? callbackAfterMapRow = null)`
-    * `public async Task<IEnumerable<TReturn>> QueryAsync<TFirstChild, TSecondChild>(string sql, object? param = null,
+* `public async Task<IEnumerable<TReturn>> QueryAsync<TFirstChild, TSecondChild>(string sql, object? param = null,
         IDbTransaction? transaction = null, bool buffered = true,
         string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null,
         Action<TReturn, TFirstChild, TSecondChild>? callbackAfterMapRow = null)`
-    * ....
-4. use optional `callbackAfterMapRow` Action to do some post-processing after the mapping is complete.
+* ....
+
+4. use optional `callbackAfterMapRow` Action parmeter on `QueryAsync` method to do some post-processing after the mapping is complete.
 ```csharp
 connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
-    customer => customer.PhoneNumbers).CallbackAfterMapRow((Customer customer) => {
-        // do something
-    }).QueryAsync(sql, new { customerId = 1 });
+    customer => customer.PhoneNumbers).QueryAsync(sql, new { customerId = 1 }, callbackAfterMapRow: (object[] objects) => {
+        // first object is the parent entity, the rest are the child entities
+    });
 ```
-
+or you could use 10 strong types of `QueryAsync` method, which can be used to specify the parent and child entities on the callback method.
+```csharp
+connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
+    customer => customer.PhoneNumbers).QueryAsync<Order, CustomerAddress, PhoneNumber, Customer>(sql, new { customerId = 1 }, callbackAfterMapRow: (Customer customer, Order order, CustomerAddress address, PhoneNumber phoneNumber) => {
+        // do something after mapping
+    });
+``` 
 ## Best Practices
 - Use strongly-typed mappers when possible
 - Leverage SplitOn for better control over field mapping
@@ -275,19 +285,19 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 
 ### Common Issues
 1. **Split Field Not Found**
-   - Ensure column names match the split fields
-   - Check case sensitivity
-   - Verify SQL query includes all required fields
+    - Ensure column names match the split fields
+    - Check case sensitivity
+    - Verify SQL query includes all required fields
 
 2. **Relationship Not Mapping**
-   - Verify property names match
-   - Check that foreign keys are properly set up
-   - Ensure collections are initialized
+    - Verify property names match
+    - Check that foreign keys are properly set up
+    - Ensure collections are initialized
 
 3. **Performance Issues**
-   - Review SQL query optimization
-   - Check database indexes
-   - Consider using buffered = false for large datasets
+    - Review SQL query optimization
+    - Check database indexes
+    - Consider using buffered = false for large datasets
 
 ## Supported Frameworks
 
@@ -298,9 +308,9 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 
 ## Version History
 - 1.0.0
-  - Initial release
-  - Basic relationship mapping query
-  - SplitOn functionality
+    - Initial release
+    - Basic relationship mapping query
+    - SplitOn functionality
 
 ## License
 
