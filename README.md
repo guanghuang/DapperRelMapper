@@ -280,6 +280,15 @@ connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(cust
 ## Limitation
 1. The return values of the `QueryAsync` methods are `IEnumerable<TReturn>`, which means that the query result will be a list of the parent entity. Unlike Dapper's `QueryAsync` method could return any type (return type is not limited to the parent entity).
 2. Currently only support 2 level of child relationships, if you need more than 2 levels of child relationships, you may use the `callbackAfterMapRow` Action to do some post-processing after the mapping is complete.
+3. It may cause duplicate data if it inolvues two more than two one-to-many relationships. Do the distinct processing if needed on `PostProcess` method.
+```
+connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
+    customer => customer.PhoneNumbers).PostProcess((Customer customer) => {
+        customer.Orders = customer.Orders?.Distinct().ToList();
+        customer.PhoneNumbers = customer.PhoneNumbers?.Distinct().ToList();
+        customer.Address = customer.Address?.Distinct().ToList();
+    }).QueryAsync(sql, new { customerId = 1 });
+```
 
 ## Troubleshooting
 
@@ -307,6 +316,8 @@ connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(cust
 - .NET 7.0+
 
 ## Version History
+- 1.1.0
+    - Add `PostProcess` method to do the distinct processing if needed
 - 1.0.0
     - Initial release
     - Basic relationship mapping query

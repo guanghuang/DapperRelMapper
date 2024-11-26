@@ -19,6 +19,7 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     private readonly LambdaExpression[] _expressions;
     private readonly Expression<Func<TReturn, TKey>> _keySelector;
     private string? _splitOn;
+    private Action<TReturn> _postProcess;
 
     /// <summary>
     /// Initializes a new instance of SqlMapperWrapper
@@ -32,6 +33,12 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
         _expressions = expressions;
         _keySelector = keySelector;
         _connection = connection;
+    }
+
+    public SqlMapperWrapper<TReturn, TKey> PostProcess(Action<TReturn> postProcess)
+    {
+        _postProcess = postProcess;
+        return this;
     }
 
     /// <summary>
@@ -99,6 +106,10 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
             callbackAfterMapRow?.Invoke(objects);
             return result;
         }, param, transaction, buffered, _splitOn ?? splitOn, commandTimeout, commandType);
+        foreach (var item in lookup.Values)
+        {
+            _postProcess?.Invoke(item);
+        }
         return lookup.Values;
     }
     
