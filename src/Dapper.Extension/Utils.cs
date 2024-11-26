@@ -53,7 +53,8 @@ public static class Utils
     {
         return typeof(ICollection).IsAssignableFrom(type) || 
                typeof(ICollection<>).IsAssignableFrom(type) ||
-               type!.GetInterfaces().Any(i => i.IsGenericType && 
+               type.IsGenericType && type.GetGenericTypeDefinition() == typeof(ICollection<>) ||
+               type.GetInterfaces().Any(i => i.IsGenericType && 
                                             i.GetGenericTypeDefinition() == typeof(ICollection<>));
     }
 

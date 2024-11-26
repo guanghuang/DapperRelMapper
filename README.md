@@ -316,6 +316,8 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 - .NET 7.0+
 
 ## Version History
+- 1.1.1
+    - Fix the collection type check issue
 - 1.1.0
     - Add `PostProcess` method to do the distinct processing if needed
 - 1.0.0
