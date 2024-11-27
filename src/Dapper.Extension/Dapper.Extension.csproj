@@ -16,7 +16,7 @@
         <RepositoryUrl>https://github.com/guanghuang/DapperRelMapper</RepositoryUrl>
         <PackageTags>Dapper;Query;Mapper</PackageTags>
         <Nullable>enable</Nullable>
-        <Version>1.1.2</Version>
+        <Version>1.1.3</Version>
         <Copyright>Copyright © 2024 Kvr.DapperRelMapper. All rights reserved.</Copyright>
     </PropertyGroup>
     <ItemGroup>

@@ -148,10 +148,11 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     /// Sets the splitOn parameter for the query
     /// </summary>
     /// <typeparam name="T">The type of the expression</typeparam>
+    /// <typeparam name="K">The type of the splitOn field</typeparam>
     /// <param name="expression">The expression defining the splitOn field</param>
     /// <param name="repeat">The number of times to repeat the splitOn field</param>
     /// <returns>The SqlMapperWrapper instance</returns>
-    public SqlMapperWrapper<TReturn, TKey> SplitOn<T>(Expression<Func<T, object>> expression, int repeat = 1)
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, K>(Expression<Func<T, K>> expression, int repeat = 1)
     {
         var memberName = expression.GetMemberExpression().Member.Name;
         var repeatedNames = string.Join(",", Enumerable.Repeat(memberName, repeat));
