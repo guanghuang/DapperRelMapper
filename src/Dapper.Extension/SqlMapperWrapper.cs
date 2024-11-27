@@ -15,10 +15,25 @@ namespace Kvr.Dapper;
 /// <typeparam name="TKey">The type of the key used for entity lookup</typeparam>
 public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
 {
+    /// <summary>
+    /// Initializes a new instance of SqlMapperWrapper
+    /// </summary>
     private readonly IDbConnection _connection;
+    /// <summary>   
+    /// Collection of expressions defining relationships
+    /// </summary>
     private readonly LambdaExpression[] _expressions;
+    /// <summary>
+    /// Expression to select the key property
+    /// </summary>
     private readonly Expression<Func<TReturn, TKey>> _keySelector;
+    /// <summary>
+    /// SplitOn parameter for the query
+    /// </summary>
     private string? _splitOn;
+    /// <summary>
+    /// Post-processing action
+    /// </summary>
     private Action<TReturn> _postProcess;
 
     /// <summary>
@@ -35,6 +50,11 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
         _connection = connection;
     }
 
+    /// <summary>
+    /// Sets the post-processing action
+    /// </summary>
+    /// <param name="postProcess">Action to perform on each returned object</param>
+    /// <returns>The SqlMapperWrapper instance</returns>
     public SqlMapperWrapper<TReturn, TKey> PostProcess(Action<TReturn> postProcess)
     {
         _postProcess = postProcess;
@@ -129,13 +149,28 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     /// </summary>
     /// <typeparam name="T">The type of the expression</typeparam>
     /// <param name="expression">The expression defining the splitOn field</param>
+    /// <param name="repeat">The number of times to repeat the splitOn field</param>
     /// <returns>The SqlMapperWrapper instance</returns>
-    public SqlMapperWrapper<TReturn, TKey> SplitOn<T>(Expression<Func<T, object>> expression)
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T>(Expression<Func<T, object>> expression, int repeat = 1)
     {
-        _splitOn = (_splitOn == null ? "" : _splitOn + ",") + expression.GetMemberExpression().Member.Name;
+        var memberName = expression.GetMemberExpression().Member.Name;
+        var repeatedNames = string.Join(",", Enumerable.Repeat(memberName, repeat));
+        _splitOn = (_splitOn == null ? "" : _splitOn + ",") + repeatedNames;
         return this;
     }
     
+    /// <summary>
+    /// Sets the splitOn parameter for the query
+    /// </summary>
+    /// <param name="splitOn">The field to split the results on</param>
+    /// <param name="repeat">The number of times to repeat the splitOn field</param>
+    /// <returns>The SqlMapperWrapper instance</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn(string splitOn, int repeat = 1)
+    {
+        _splitOn = (_splitOn == null ? "" : _splitOn + ",") + string.Join(",", Enumerable.Repeat(splitOn, repeat));
+        return this;
+    }
+
     /// <summary>
     /// Executes the query and maps the results with a single child relationship
     /// </summary>

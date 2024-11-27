@@ -316,6 +316,8 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 - .NET 7.0+
 
 ## Version History
+- 1.1.2
+    - Add `repeat` parameter to the `SplitOn` method to specify the number of times the field should be repeated in the `splitOn` parameter, also add `SplitOn` method with `string` parameter if the field name is different from the property name.
 - 1.1.1
     - Fix the collection type check issue
 - 1.1.0
