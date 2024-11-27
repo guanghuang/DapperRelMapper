@@ -182,8 +182,8 @@ await connection.ConfigMapper<Customer, int>(customer => customer.Id, customer =
 or you could use typed splitOn:
 ```csharp
 await connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
-    customer => customer.PhoneNumbers).SplitOn<Order>(order => order.OrderId).SplitOn<CustomerAddress>(address => address.AddressId)
-    .SplitOn<PhoneNumber>(phoneNumber => phoneNumber.PhoneNumberId).QueryAsync(sql, new { customerId = 1 });
+    customer => customer.PhoneNumbers).SplitOn<Order, int>(order => order.OrderId).SplitOn<CustomerAddress, int>(address => address.AddressId)
+    .SplitOn<PhoneNumber, string>(phoneNumber => phoneNumber.PhoneNumberId).QueryAsync(sql, new { customerId = 1 });
 ```
 ## Usage
 1. Configure the mapping relationship between the parent and child entities using the `ConfigMapper` method.
@@ -316,6 +316,8 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 - .NET 7.0+
 
 ## Version History
+- 1.1.3
+    - Fix `SplitOn` on primitive type boxing/unboxing issue
 - 1.1.2
     - Add `repeat` parameter to the `SplitOn` method to specify the number of times the field should be repeated in the `splitOn` parameter, also add `SplitOn` method with `string` parameter if the field name is different from the property name.
 - 1.1.1
