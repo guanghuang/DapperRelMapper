@@ -276,6 +276,7 @@ connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(cust
 - Use appropriate indexes on join columns
 - Consider using callbacks for complex post-processing
 - Use transactions for data consistency
+- For generate sql script, you could use the `SqlBuilder` from [SqlBuilder](https://github.com/guanghuang/SqlBuilder) project which is a lightweight strong typed sql script generator.
 
 ## Limitation
 1. The return values of the `QueryAsync` methods are `IEnumerable<TReturn>`, which means that the query result will be a list of the parent entity. Unlike Dapper's `QueryAsync` method could return any type (return type is not limited to the parent entity).
@@ -317,6 +318,8 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 
 ## Version History
 
+- 1.1.5
+    - Add `SqlBuilder` from [SqlBuilder](https://github.com/guanghuang/SqlBuilder) project README.md file. No code change.
 - 1.1.4
     - Update `SplitOn` with return type of the expression is `object`, remove the boxing/unboxing unnecessary `SplitOn` methods for primitive type
 - 1.1.3
