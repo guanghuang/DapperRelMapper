@@ -20,12 +20,16 @@ public static class Utils
     /// <exception cref="ArgumentException">Thrown when expression is not a valid member expression</exception>
     public static MemberExpression GetMemberExpression(this LambdaExpression expression)
     {
-        if (expression.Body is MemberExpression memberExpression)
+        var memberExpression = expression.Body as MemberExpression;
+        if (memberExpression == null && expression.Body is UnaryExpression unaryExpression)
         {
-            return memberExpression;
+            memberExpression = unaryExpression.Operand as MemberExpression;
         }
 
-        throw new ArgumentException("Invalid expression");
+        if (memberExpression == null)
+            throw new ArgumentException("Expression must be a member expression");
+        
+        return memberExpression;
     }
 
     /// <summary>
