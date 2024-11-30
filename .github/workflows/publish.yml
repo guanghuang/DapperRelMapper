@@ -6,11 +6,13 @@ on:
       - 'v*'
     branches:
       - 'main'
-    
+      
 jobs:
   publish:
+    permissions:
+      packages: write # Permission to publish packages
+      contents: read # Permission to read repository contents    
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v3
     
