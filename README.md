@@ -318,6 +318,8 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 
 ## Version History
 
+- 1.1.6 (preview)
+    - Add xunit test project
 - 1.1.5
     - Add `SqlBuilder` from [SqlBuilder](https://github.com/guanghuang/SqlBuilder) project README.md file. No code change.
 - 1.1.4
