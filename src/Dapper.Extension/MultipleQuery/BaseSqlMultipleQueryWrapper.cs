@@ -9,7 +9,8 @@ namespace Kvr.Dapper.MultipleQuery;
 /// <summary>
 /// This class is used to map the result of a query to a model.
 /// </summary>
-public record QueryConfiguration(string SqlForChild, LambdaExpression? Expression, string? SplitOn, LambdaExpression? KeySelector, LambdaExpression[]? RelExpressions);
+public record QueryConfiguration(string SqlForChild, LambdaExpression? Expression, string? SplitOn, LambdaExpression? KeySelector, 
+    LambdaExpression[]? RelExpressions, Action<object[]>? CallbackAfterMapRow);
 
 /// <summary>
 /// This class is used to map the result of a query to a model.
@@ -39,7 +40,7 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
     {
         _connection = connection;
     }
-    
+
     /// <summary>
     /// Configures the parent query.
     /// </summary>
@@ -47,13 +48,15 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
     /// <param name="splitOn">The field to split the results on.</param>
     /// <param name="keySelector">The key selector.</param>
     /// <param name="relExpressions">The relationship expressions.</param>
+    /// <param name="callbackAfterMapRow">Callback to execute after mapping each row</param>
     /// <returns>The configured parent query wrapper.</returns>
-    public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigParent(string sqlByKeyForParent, string? splitOn = null, Expression<Func<TReturn, TKey>>? keySelector = null, LambdaExpression[]? relExpressions = null)
+    public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigParent(string sqlByKeyForParent, string? splitOn = null, Expression<Func<TReturn, TKey>>? keySelector = null, 
+        LambdaExpression[]? relExpressions = null, Action<object[]>? callbackAfterMapRow = null)
     {
-        _queryConfigurationForParent = new QueryConfiguration(sqlByKeyForParent, null, splitOn, keySelector, relExpressions);
+        _queryConfigurationForParent = new QueryConfiguration(sqlByKeyForParent, null, splitOn, keySelector, relExpressions, callbackAfterMapRow);
         return this;
     }
-    
+
     /// <summary>
     /// Configures the child query.
     /// </summary>
@@ -64,11 +67,13 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
     /// <param name="splitOn">The field to split the results on.</param>
     /// <param name="keySelector">The key selector.</param>
     /// <param name="relExpressions">The relationship expressions.</param>
+    /// <param name="callbackAfterMapRow">Callback to execute after mapping each row</param>
     /// <returns>The configured child query wrapper.</returns>
     public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigChild<TChild, TCKey>(string sqlByKeyForChild,
-        Expression<Func<TReturn, TChild>> childSelector, string? splitOn = null, Expression<Func<TChild, TCKey>>? keySelector = null, LambdaExpression[]? relExpressions = null)
+        Expression<Func<TReturn, TChild>> childSelector, string? splitOn = null, Expression<Func<TChild, TCKey>>? keySelector = null, 
+        LambdaExpression[]? relExpressions = null, Action<object[]>? callbackAfterMapRow = null)
     {
-        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions));
+        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions, callbackAfterMapRow));
         return this;
     }
 
@@ -81,11 +86,13 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
     /// <param name="splitOn">The field to split the results on.</param>
     /// <param name="keySelector">The key selector.</param>
     /// <param name="relExpressions">The relationship expressions.</param>
+    /// <param name="callbackAfterMapRow">Callback to execute after mapping each row</param>
     /// <returns>The configured child query wrapper.</returns>
     public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigChild<TChild>(string sqlByKeyForChild,
-        Expression<Func<TReturn, TChild>> childSelector, string? splitOn = null, Expression<Func<TChild, object>>? keySelector = null, LambdaExpression[]? relExpressions = null)
+        Expression<Func<TReturn, TChild>> childSelector, string? splitOn = null, Expression<Func<TChild, object>>? keySelector = null, 
+        LambdaExpression[]? relExpressions = null, Action<object[]>? callbackAfterMapRow = null)
     {
-        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions));
+        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions, callbackAfterMapRow));
         return this;
     }
 
@@ -99,21 +106,43 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
     /// <param name="splitOn">The field to split the results on.</param>
     /// <param name="keySelector">The key selector.</param>
     /// <param name="relExpressions">The relationship expressions.</param>
+    /// <param name="callbackAfterMapRow">Callback to execute after mapping each row</param>
     /// <returns>The configured child query wrapper.</returns>
     public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigChild<TChild, TCKey>(string sqlByKeyForChild,
-        Expression<Func<TReturn, ICollection<TChild>>> childSelector, string? splitOn = null, Expression<Func<TChild, TCKey>>? keySelector = null, LambdaExpression[]? relExpressions = null)
+        Expression<Func<TReturn, ICollection<TChild>>> childSelector, string? splitOn = null, Expression<Func<TChild, TCKey>>? keySelector = null, 
+        LambdaExpression[]? relExpressions = null, Action<object[]>? callbackAfterMapRow = null)
     {
-        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions));
+        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions, callbackAfterMapRow));
         return this;
     }
 
+    /// <summary>
+    /// Configures the child query.
+    /// </summary>
+    /// <typeparam name="TChild">The type of the child.</typeparam>
+    /// <param name="sqlByKeyForChild">The SQL query for the child.</param>
+    /// <param name="childSelector">The child selector.</param>
+    /// <param name="splitOn">The field to split the results on.</param>
+    /// <param name="keySelector">The key selector.</param>
+    /// <param name="relExpressions">The relationship expressions.</param>
+    /// <param name="callbackAfterMapRow">Callback to execute after mapping each row</param>
+    /// <returns>The configured child query wrapper.</returns>
     public BaseSqlMultipleQueryWrapper<TReturn, TKey> ConfigChild<TChild>(string sqlByKeyForChild,
-        Expression<Func<TReturn, ICollection<TChild>>> childSelector, string? splitOn = null, Expression<Func<TChild, object>>? keySelector = null, LambdaExpression[]? relExpressions = null)
+        Expression<Func<TReturn, ICollection<TChild>>> childSelector, string? splitOn = null, Expression<Func<TChild, object>>? keySelector = null,
+        LambdaExpression[]? relExpressions = null, Action<object[]>? callbackAfterMapRow = null)
     {
-        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions));
+        _childQueryConfigs.Add(new QueryConfiguration(sqlByKeyForChild, childSelector, splitOn, keySelector, relExpressions, callbackAfterMapRow));
         return this;
     }
 
+    /// <summary>
+    /// Executes the query asynchronously.
+    /// </summary>
+    /// <param name="key">The key.</param>
+    /// <param name="transaction">The transaction.</param>
+    /// <param name="commandTimeout">The command timeout.</param>
+    /// <param name="commandType">The command type.</param>
+    /// <returns>The result of the query.</returns>
     public async Task<TReturn> QueryAsync(TKey key, IDbTransaction? transaction = null, int? commandTimeout = null,
         CommandType? commandType = null)
     {
@@ -191,7 +220,8 @@ public abstract class BaseSqlMultipleQueryWrapper<TReturn, TKey>
         }
         else
         {
-            var splitOnModel = MapperHelper.GetSplitOnModel(queryConfiguration.KeySelector!, queryConfiguration.RelExpressions!, lookup);
+            var splitOnModel = MapperHelper.GetSplitOnModel(queryConfiguration.KeySelector!, queryConfiguration.RelExpressions!, lookup, 
+                queryConfiguration.CallbackAfterMapRow);
             // must use ToList to eagerly read the data, otherwise the reader will be disposed and no data will be returned
             reader.Read(splitOnModel.Types, splitOnModel.Func, queryConfiguration.SplitOn!, false).ToList();
             data = lookup.Values;
