@@ -336,7 +336,8 @@ connection.CreateMultipleQueryMapper<Customer, int, Address, PhoneNumber>().Conf
 - .NET 7.0+
 
 ## Version History
-
+- 1.2.1
+    - Add `callbackAfterMapRow` parameter to the `SqlMultipleQuery` to config parent and child callback after mapping
 - 1.2.0
     - Add `SqlMultipleQuery` mappers which could query multiple tables at same time and map them to the parent and child entities
     - Add `SplitOnBuilder` to generate the `splitOn` parameter
