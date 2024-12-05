@@ -4,7 +4,7 @@ Copyright © 2024 Kvr.DapperRelMapper. All rights reserved.
 
 A lightweight extension for Dapper that provides additional functionality and simplified database querying with relationships.
 
-## Table of Contents
+## Table of Content
 - [Features](#features)
 - [Installation](#installation)
 - [Quick Start Guide](#quick-start-guide)
@@ -17,8 +17,10 @@ A lightweight extension for Dapper that provides additional functionality and si
     - [Using SplitOn Method](#using-spliton-method)
     - [Query Execution](#query-execution)
     - [Callback Support](#callback-support)
+    - [SplitOnBuilder](#splitonbuilder)
+    - [SqlMultipleQuery](#sqlmultiplequery)
 - [Best Practices](#best-practices)
-- [Limitations](#limitations)
+- [Limitation](#limitation)
 - [Troubleshooting](#troubleshooting)
     - [Common Issues](#common-issues)
 - [Supported Frameworks](#supported-frameworks)
@@ -269,6 +271,22 @@ connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(cust
         // do something after mapping
     });
 ``` 
+5. `SplitOnBuilder` to generate the `splitOn` parameter
+```csharp
+var splitOn = SplitOnBuilder.Create().SplitOn<Order>(order => order.OrderId).SplitOn<CustomerAddress>(address => address.AddressId)
+    .SplitOn<PhoneNumber>(phoneNumber => phoneNumber.PhoneNumberId).Build();
+```
+6. `SqlMultipleQuery` to query multiple tables at same time and map them to the parent and child entities
+```csharp
+var customers = connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
+    customer => customer.PhoneNumbers).QueryMultiple(sql, new { customerId = 1 });
+```
+  * The `SqlMultipleQuery` methods will use `Dapper`'s `QueryMultiple` method to query multiple tables at same time. 
+  * It will return a parent object which contains the parent entity and child entities.
+  * The query will accept the key of the parent entity as the parameter.
+  * Assume the each child query will use the same parameter, the parameter will be passed to each child query.
+  * This could fix the issue returned duplicate child entities if the query includes two more than two one-to-many relationships.
+
 ## Best Practices
 - Use strongly-typed mappers when possible
 - Leverage SplitOn for better control over field mapping
@@ -283,12 +301,13 @@ connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>(cust
 2. Currently only support 2 level of child relationships, if you need more than 2 levels of child relationships, you may use the `callbackAfterMapRow` Action to do some post-processing after the mapping is complete.
 3. It may cause duplicate data if it inolvues two more than two one-to-many relationships. Do the distinct processing if needed on `PostProcess` method.
 ```
-connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => customer.Orders, customer => customer.Address, 
-    customer => customer.PhoneNumbers).PostProcess((Customer customer) => {
-        customer.Orders = customer.Orders?.Distinct().ToList();
-        customer.PhoneNumbers = customer.PhoneNumbers?.Distinct().ToList();
-        customer.Address = customer.Address?.Distinct().ToList();
-    }).QueryAsync(sql, new { customerId = 1 });
+// two children
+connection.CreateMultipleQueryMapper<Customer, int, Address>().ConfigParent("Select * from Customers where Id = @CustomerId")
+    .ConfigChild<Address>("Select * from Addresses where CustomerId = @CustomerId", c => c.Addresses).QueryAsync(new { customerId = 1 });
+// three children
+connection.CreateMultipleQueryMapper<Customer, int, Address, PhoneNumber>().ConfigParent("Select * from Customers where Id = @CustomerId")
+    .ConfigChild<Address>("Select * from Addresses where CustomerId = @CustomerId", c => c.Addresses)
+    .ConfigChild<PhoneNumber>("Select * from PhoneNumbers where CustomerId = @CustomerId", c => c.PhoneNumbers).QueryAsync(new { customerId = 1 });
 ```
 
 ## Troubleshooting
@@ -318,7 +337,9 @@ connection.ConfigMapper<Customer, int>(customer => customer.Id, customer => cust
 
 ## Version History
 
-- 1.1.6 (preview)
+- 1.2.0
+    - Add `SqlMultipleQuery` mappers which could query multiple tables at same time and map them to the parent and child entities
+    - Add `SplitOnBuilder` to generate the `splitOn` parameter
     - Add xunit test project
 - 1.1.5
     - Add `SqlBuilder` from [SqlBuilder](https://github.com/guanghuang/SqlBuilder) project README.md file. No code change.

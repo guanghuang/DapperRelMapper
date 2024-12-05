@@ -3,6 +3,7 @@
 
 using System.Data;
 using System.Linq.Expressions;
+using Kvr.Dapper.MultipleQuery;
 
 namespace Kvr.Dapper;
 
@@ -115,16 +116,17 @@ public static class SqlMapperExtension
     /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
     /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
     /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
-    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>  
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
     /// <param name="connection">Database connection</param>
     /// <param name="keySelector">Expression to select the key property</param>
     /// <param name="firstChildSelector">Expression defining the first child relationship</param>
     /// <param name="secondChildSelector">Expression defining the second child relationship</param>
     /// <param name="thirdChildSelector">Expression defining the third child relationship</param>
     /// <param name="fourthChildSelector">Expression defining the fourth child relationship</param>
-    /// <returns>Configured SqlMapperWrapper instance</returns> 
+    /// <returns>Configured SqlMapperWrapper instance</returns>
     public static SqlMapperWrapper<TReturn, TKey> ConfigMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild,
-        TFourthChild>(this IDbConnection connection, Expression<Func<TReturn, TKey>> keySelector,
+        TFourthChild>(
+        this IDbConnection connection, Expression<Func<TReturn, TKey>> keySelector,
         Expression<Func<TReturn, TFirstChild>> firstChildSelector,
         Expression<Func<TReturn, TSecondChild>> secondChildSelector,
         Expression<Func<TReturn, TThirdChild>> thirdChildSelector,
@@ -383,5 +385,381 @@ public static class SqlMapperExtension
                 firstChildSelector, secondChildSelector, thirdChildSelector, fourthChildSelector, fifthChildSelector,
                 sixthChildSelector, seventhChildSelector, eighthChildSelector, ninthChildSelector, tenthChildSelector
             });
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild> CreateMultipleQueryMapper<TReturn, TKey,
+        TFirstChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild> CreateMultipleQueryMapper<TReturn,
+        TKey, TFirstChild, TSecondChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild>
+        CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild>(this IDbConnection connection)
+        where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild>
+        CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild>(
+            this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild>(
+            connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild>
+        CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild>(
+            this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild,
+            TFourthChild, TFifthChild, TSixthChild, TSeventhChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild,
+            TSecondChild,
+            TThirdChild, TFourthChild, TFifthChild, TSixthChild, TSeventhChild, TEighthChild>(
+            this IDbConnection connection)
+        where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild,
+            TSecondChild, TThirdChild, TFourthChild, TFifthChild, TSixthChild, TSeventhChild, TEighthChild,
+            TNinthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild> CreateMultipleQueryMapper<TReturn, TKey,
+            TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild, TSixthChild, TSeventhChild, TEighthChild,
+            TNinthChild, TTenthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <typeparam name="TEleventhChild">Type of the eleventh child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild>
+        CreateMultipleQueryMapper<
+            TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild, TSixthChild,
+            TSeventhChild,
+            TEighthChild, TNinthChild, TTenthChild, TEleventhChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild,
+            TEleventhChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <typeparam name="TEleventhChild">Type of the eleventh child entity</typeparam>
+    /// <typeparam name="TTwelfthChild">Type of the twelfth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild, TTwelfthChild>
+        CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <typeparam name="TEleventhChild">Type of the eleventh child entity</typeparam>
+    /// <typeparam name="TTwelfthChild">Type of the twelfth child entity</typeparam>
+    /// <typeparam name="TThirteenthChild">Type of the thirteenth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild, TTwelfthChild,
+            TThirteenthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild,
+            TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild,
+            TThirteenthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild, TThirteenthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <typeparam name="TEleventhChild">Type of the eleventh child entity</typeparam>
+    /// <typeparam name="TTwelfthChild">Type of the twelfth child entity</typeparam>
+    /// <typeparam name="TThirteenthChild">Type of the thirteenth child entity</typeparam>
+    /// <typeparam name="TFourteenthChild">Type of the fourteenth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild, TTwelfthChild,
+            TThirteenthChild, TFourteenthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild, TSecondChild,
+            TThirdChild, TFourthChild, TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild,
+            TEleventhChild, TTwelfthChild, TThirteenthChild, TFourteenthChild>(this IDbConnection connection)
+        where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild, TThirteenthChild, TFourteenthChild>(connection);
+    }
+
+    /// <summary>
+    /// Create a multiple query mapper
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the main entity</typeparam>
+    /// <typeparam name="TKey">The type of the key</typeparam>
+    /// <typeparam name="TFirstChild">Type of the first child entity</typeparam>
+    /// <typeparam name="TSecondChild">Type of the second child entity</typeparam>
+    /// <typeparam name="TThirdChild">Type of the third child entity</typeparam>
+    /// <typeparam name="TFourthChild">Type of the fourth child entity</typeparam>
+    /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
+    /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
+    /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
+    /// <typeparam name="TNinthChild">Type of the ninth child entity</typeparam>
+    /// <typeparam name="TTenthChild">Type of the tenth child entity</typeparam>
+    /// <typeparam name="TEleventhChild">Type of the eleventh child entity</typeparam>
+    /// <typeparam name="TTwelfthChild">Type of the twelfth child entity</typeparam>
+    /// <typeparam name="TThirteenthChild">Type of the thirteenth child entity</typeparam>
+    /// <typeparam name="TFourteenthChild">Type of the fourteenth child entity</typeparam>
+    /// <typeparam name="TFifteenthChild">Type of the fifteenth child entity</typeparam>
+    /// <param name="connection">Database connection</param>
+    /// <returns>Configured SqlMultipleQueryWrapper instance</returns>  
+    public static
+        SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild, TFifthChild,
+            TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild, TTwelfthChild,
+            TThirteenthChild, TFourteenthChild, TFifteenthChild> CreateMultipleQueryMapper<TReturn, TKey, TFirstChild,
+            TSecondChild, TThirdChild, TFourthChild, TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild,
+            TTenthChild, TEleventhChild, TTwelfthChild, TThirteenthChild, TFourteenthChild,
+            TFifteenthChild>(this IDbConnection connection) where TKey : notnull
+    {
+        return new SqlMultipleQueryWrapper<TReturn, TKey, TFirstChild, TSecondChild, TThirdChild, TFourthChild,
+            TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
+            TTwelfthChild, TThirteenthChild, TFourteenthChild, TFifteenthChild>(connection);
     }
 }

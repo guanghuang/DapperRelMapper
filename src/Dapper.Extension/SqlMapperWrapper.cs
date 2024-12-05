@@ -1,7 +1,6 @@
 // Copyright © 2024 Kvr.DapperRelMapper. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE file in the project root for full license information.
 
-using System.Collections;
 using System.Data;
 using System.Linq.Expressions;
 using Dapper;
@@ -78,54 +77,12 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
         string splitOn = "Id", int? commandTimeout = null, CommandType? commandType = null,
         Action<object[]>? callbackAfterMapRow = null)
     {
-        var lookup = new Dictionary<TKey, TReturn>();
-        var memberExpressions = _expressions.Select(e => e.GetMemberExpression()).ToArray();
-        var types = new[] { typeof(TReturn) }.Concat(memberExpressions.Select(e => e.GetMapType())).ToArray();
+        var lookup = new Dictionary<object, TReturn>();
+        // var memberExpressions = _expressions.Select(e => e.GetMemberExpression()).ToArray();
+        // var types = new[] { typeof(TReturn) }.Concat(memberExpressions.Select(e => e.GetMapType())).ToArray();
 
-        await _connection.QueryAsync(sql, types, objects =>
-        {
-            var result = (TReturn)objects[0];
-            var key = Utils.GetPropertyValue(result, _keySelector);
-            var newRecord = !lookup.ContainsKey(key);
-            if (newRecord)
-            {
-                lookup.Add(key, result);
-            }
-            else
-            {
-                result = lookup[key];
-            }
-
-            for (var i = 1; i < objects.Length; i++)
-            {
-                var memberExpression = memberExpressions[i - 1];
-                if (memberExpression.Member.DeclaringType != typeof(TReturn))
-                {
-                    continue;
-                }
-
-                if (Utils.IsCollectionType(memberExpression.Type))
-                {
-                    if (newRecord)
-                    {
-                        Utils.SetPropertyValue(result, memberExpression,
-                            Activator.CreateInstance(typeof(List<>).MakeGenericType(types[i])));
-                    }
-
-                    if (objects[i] != null)
-                    {
-                        Utils.GetPropertyValue<TReturn, IList>(result, memberExpression).Add(objects[i]);
-                    }
-                }
-                else
-                {
-                    Utils.SetPropertyValue(result, memberExpression, objects[i]);
-                }
-            }
-
-            callbackAfterMapRow?.Invoke(objects);
-            return result;
-        }, param, transaction, buffered, _splitOn ?? splitOn, commandTimeout, commandType);
+        var splitOnModel = MapperHelper.GetSplitOnModel(_keySelector, _expressions, lookup, callbackAfterMapRow);
+        await _connection.QueryAsync(sql, splitOnModel.Types, splitOnModel.Func, param, transaction, buffered, _splitOn ?? splitOn, commandTimeout, commandType);
         foreach (var item in lookup.Values)
         {
             _postProcess?.Invoke(item);
@@ -339,6 +296,7 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     /// <typeparam name="TFifthChild">Type of the fifth child entity</typeparam>
     /// <typeparam name="TSixthChild">Type of the sixth child entity</typeparam>
     /// <typeparam name="TSeventhChild">Type of the seventh child entity</typeparam>
+    /// <typeparam name="TEighthChild">Type of the eighth child entity</typeparam>
     /// <param name="sql">The SQL query to execute</param>
     /// <param name="param">The parameters to pass to the query</param>
     /// <param name="transaction">The transaction to use (if any)</param>
