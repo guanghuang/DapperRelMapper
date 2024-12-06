@@ -336,6 +336,8 @@ connection.CreateMultipleQueryMapper<Customer, int, Address, PhoneNumber>().Conf
 - .NET 7.0+
 
 ## Version History
+- 1.2.2
+    - Add child entity many to one relationship mapping, not need to use `callbackAfterMapRow` to do the mapping
 - 1.2.1
     - Add `callbackAfterMapRow` parameter to the `SqlMultipleQuery` to config parent and child callback after mapping
 - 1.2.0
