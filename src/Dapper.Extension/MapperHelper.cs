@@ -37,6 +37,25 @@ static class MapperHelper
     {
         var memberExpressions = expressions.Select(e => e.GetMemberExpression()).ToArray();
         var types = new[] { typeof(T) }.Concat(memberExpressions.Select(e => e.GetMapType())).ToArray();
+        var memberTypeParentIndex = new int[memberExpressions.Length];
+        for (var i = 0; i < memberExpressions.Length; i++)
+        {
+            var memberExpression = memberExpressions[i];
+            if (memberExpression.Member.DeclaringType == typeof(T)) {
+                memberTypeParentIndex[i] = 0;
+            } 
+            else 
+            {
+                for (var j = i - 1; j >= 0; j--)
+                {
+                    if (memberExpressions[i].Member.DeclaringType == types[j + 1])
+                    {
+                        memberTypeParentIndex[i] = j + 1;
+                        break;
+                    }
+                }
+            }
+        }
         return new SplitOnModel<T>()
         {
             Types = types,
@@ -57,27 +76,35 @@ static class MapperHelper
                 for (var i = 1; i < objects.Length; i++)
                 {
                     var memberExpression = memberExpressions[i - 1];
-                    if (memberExpression.Member.DeclaringType != typeof(T))
+                    if (memberExpression.Member.DeclaringType == typeof(T)) 
                     {
-                        continue;
-                    }
-
-                    if (Utils.IsCollectionType(memberExpression.Type))
-                    {
-                        if (newRecord)
+                        if (Utils.IsCollectionType(memberExpression.Type))
                         {
-                            Utils.SetPropertyValue(result, memberExpression,
-                                Activator.CreateInstance(typeof(List<>).MakeGenericType(types[i])));
-                        }
+                            if (newRecord)
+                            {
+                                Utils.SetPropertyValue(result, memberExpression,
+                                    Activator.CreateInstance(typeof(List<>).MakeGenericType(types[i])));
+                            }
 
-                        if (objects[i] != null)
+                            if (objects[i] != null)
+                            {
+                                Utils.GetPropertyValue<object, IList>(result, memberExpression).Add(objects[i]);
+                            }
+                        }
+                        else
                         {
-                            Utils.GetPropertyValue<object, IList>(result, memberExpression).Add(objects[i]);
+                            Utils.SetPropertyValue(result, memberExpression, objects[i]);
                         }
                     }
-                    else
+                    else 
                     {
-                        Utils.SetPropertyValue(result, memberExpression, objects[i]);
+                        var parentResult = objects[memberTypeParentIndex[i - 1]];
+                        // only deal with many to one
+                        // skip many to many/one
+                        if (!Utils.IsCollectionType(memberExpression.Type) && objects[i] != null && types[i] == objects[i].GetType())
+                        {
+                            Utils.SetPropertyValue(parentResult, memberExpression, objects[i]);
+                        }
                     }
                 }
 
