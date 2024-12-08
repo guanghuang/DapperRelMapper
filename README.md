@@ -19,6 +19,7 @@ A lightweight extension for Dapper that provides additional functionality and si
     - [Callback Support](#callback-support)
     - [SplitOnBuilder](#splitonbuilder)
     - [SqlMultipleQuery](#sqlmultiplequery)
+    - [DistinctChildren](#distinctchildren)
 - [Best Practices](#best-practices)
 - [Limitation](#limitation)
 - [Troubleshooting](#troubleshooting)
@@ -286,7 +287,13 @@ var customers = connection.ConfigMapper<Customer, int>(customer => customer.Id, 
   * The query will accept the key of the parent entity as the parameter.
   * Assume the each child query will use the same parameter, the parameter will be passed to each child query.
   * This could fix the issue returned duplicate child entities if the query includes two more than two one-to-many relationships.
-
+7. `DistinctChildren` method to distinct the children of the parent for `Dapper` query. After the mapping is complete, if join multiple one-to-many relationships, the child entities will be duplicated. Using the `DistinctChildren` method to distinct the children of the parent instead of using the `PostProcess` callback action.
+```csharp
+connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>().DistinctChildren(customer => customer.Orders, order => order.OrderId)
+    .QueryAsync(sql, new { customerId = 1 })
+    .DistinctChildren<Customer, CustomerAddress, int>(customer => customer.Address, address => address.AddressId)
+    .DistinctChildren<Customer, PhoneNumber, int>(customer => customer.PhoneNumbers, phoneNumber => phoneNumber.PhoneNumberId);
+```
 ## Best Practices
 - Use strongly-typed mappers when possible
 - Leverage SplitOn for better control over field mapping
@@ -336,6 +343,8 @@ connection.CreateMultipleQueryMapper<Customer, int, Address, PhoneNumber>().Conf
 - .NET 7.0+
 
 ## Version History
+- 1.2.3
+    - Add `DistinctChildren` method to distinct the children of the parent from `Dapper` query
 - 1.2.2
     - Add child entity many to one relationship mapping, not need to use `callbackAfterMapRow` to do the mapping
 - 1.2.1
