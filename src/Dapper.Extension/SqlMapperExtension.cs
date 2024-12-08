@@ -762,4 +762,53 @@ public static class SqlMapperExtension
             TFifthChild, TSixthChild, TSeventhChild, TEighthChild, TNinthChild, TTenthChild, TEleventhChild,
             TTwelfthChild, TThirteenthChild, TFourteenthChild, TFifteenthChild>(connection);
     }
+    
+    /// <summary>
+    /// Distinct the children of the parent
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the parent</typeparam>
+    /// <typeparam name="TChild">The type of the child</typeparam>
+    /// <typeparam name="TChildKey">The type of the child key</typeparam>
+    /// <param name="parent">The parent</param>
+    /// <param name="expressionNavigation">The expression navigation</param>
+    /// <param name="funcChildKey">The function child key</param>
+    /// <returns>The parent</returns>
+    public static TReturn DistinctChildren<TReturn, TChild, TChildKey>(this TReturn parent, Expression<Func<TReturn, ICollection<TChild>>> expressionNavigation, 
+        Func<TChild, TChildKey> funcChildKey) where TChildKey: notnull
+    {
+        if (parent != null)
+        {
+            Utils.SetPropertyValue(parent, expressionNavigation.GetMemberExpression(), Utils.GetPropertyValue(parent, expressionNavigation)
+                ?.GroupBy(funcChildKey).Select(x => x.First()).ToList());
+        }
+        return parent;
+    }
+    
+    /// <summary>
+    /// Distinct the children of the parents
+    /// </summary>
+    /// <typeparam name="TReturn">The type of the parent</typeparam>
+    /// <typeparam name="TChild">The type of the child</typeparam>
+    /// <typeparam name="TChildKey">The type of the child key</typeparam>
+    /// <param name="parents">The parents</param>
+    /// <param name="expressionNavigation">The expression navigation</param>
+    /// <param name="funcChildKey">The function child key</param>
+    /// <returns>The parents</returns>
+    public static IEnumerable<TReturn> DistinctChildren<TReturn, TChild, TChildKey>(this IEnumerable<TReturn> parents, Expression<Func<TReturn, ICollection<TChild>>> expressionNavigation, 
+        Func<TChild, TChildKey> funcChildKey) where TChildKey: notnull
+    {
+        if (parents != null)
+        {
+            if (parents is not List<TReturn>)
+            {
+                parents = parents.ToList();
+            }
+            foreach (var parent in parents)
+            {
+                parent.DistinctChildren(expressionNavigation, funcChildKey);
+            }
+        }
+
+        return parents;
+    }
 }
