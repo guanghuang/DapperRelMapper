@@ -289,10 +289,9 @@ var customers = connection.ConfigMapper<Customer, int>(customer => customer.Id, 
   * This could fix the issue returned duplicate child entities if the query includes two more than two one-to-many relationships.
 7. `DistinctChildren` method to distinct the children of the parent for `Dapper` query. After the mapping is complete, if join multiple one-to-many relationships, the child entities will be duplicated. Using the `DistinctChildren` method to distinct the children of the parent instead of using the `PostProcess` callback action.
 ```csharp
-connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>().DistinctChildren(customer => customer.Orders, order => order.OrderId)
-    .QueryAsync(sql, new { customerId = 1 })
-    .DistinctChildren<Customer, CustomerAddress, int>(customer => customer.Address, address => address.AddressId)
-    .DistinctChildren<Customer, PhoneNumber, int>(customer => customer.PhoneNumbers, phoneNumber => phoneNumber.PhoneNumberId);
+connection.ConfigMapper<Customer, int, Order, CustomerAddress, PhoneNumber>().QueryAsync(sql, new { customerId = 1 })
+    .DistinctChildren(customer => customer.Orders, order => order.OrderId)
+    .DistinctChildren(customer => customer.PhoneNumbers, phoneNumber => phoneNumber.PhoneNumberId);
 ```
 ## Best Practices
 - Use strongly-typed mappers when possible
