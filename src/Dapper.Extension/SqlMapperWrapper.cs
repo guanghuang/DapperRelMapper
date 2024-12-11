@@ -91,10 +91,15 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     }
     
     /// <summary>
-    /// Sets the splitOn parameter for the query
+    /// Sets the splitOn parameter for the query using multiple expressions
     /// </summary>
-    /// <param name="expressions">Expressions defining the splitOn fields</param>
-    /// <returns>The SqlMapperWrapper instance</returns>
+    /// <param name="expressions">Array of expressions defining the splitOn fields</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    /// <example>
+    /// <code>
+    /// wrapper.SplitOn(x => x.Id, x => x.ParentId);
+    /// </code>
+    /// </example>
     public SqlMapperWrapper<TReturn, TKey> SplitOn(params LambdaExpression[] expressions)
     {
         _splitOn = (_splitOn == null ? "" : _splitOn + ",") + string.Join(",", expressions.Select(e => e.GetMemberExpression().Member.Name));
@@ -102,12 +107,12 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     }
 
     /// <summary>
-    /// Sets the splitOn parameter for the query
+    /// Sets the splitOn parameter for the query with optional repetition
     /// </summary>
-    /// <typeparam name="T">The type of the expression</typeparam>
-    /// <param name="expression">The expression defining the splitOn field</param>
-    /// <param name="repeat">The number of times to repeat the splitOn field</param>
-    /// <returns>The SqlMapperWrapper instance</returns>
+    /// <typeparam name="T">The type containing the property to split on</typeparam>
+    /// <param name="expression">Expression defining the splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
     public SqlMapperWrapper<TReturn, TKey> SplitOn<T>(Expression<Func<T, object>> expression, int repeat = 1)
     {
         var memberName = expression.GetMemberExpression().Member.Name;
@@ -117,16 +122,190 @@ public class SqlMapperWrapper<TReturn, TKey> where TKey : notnull
     }
     
     /// <summary>
-    /// Sets the splitOn parameter for the query
+    /// Sets the splitOn parameter for the query using a string value with optional repetition
     /// </summary>
-    /// <param name="splitOn">The field to split the results on</param>
-    /// <param name="repeat">The number of times to repeat the splitOn field</param>
-    /// <returns>The SqlMapperWrapper instance</returns>
+    /// <param name="splitOn">The field name to split the results on</param>
+    /// <param name="repeat">Number of times to repeat the splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    /// <example>
+    /// <code>
+    /// // Results in "Id,Id,Id"
+    /// wrapper.SplitOn("Id", 3);
+    /// </code>
+    /// </example>
     public SqlMapperWrapper<TReturn, TKey> SplitOn(string splitOn, int repeat = 1)
     {
         _splitOn = (_splitOn == null ? "" : _splitOn + ",") + string.Join(",", Enumerable.Repeat(splitOn, repeat));
         return this;
     }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using two expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, int repeat = 1, int repeat1 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using three expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, int repeat = 1, int repeat1 = 1, int repeat2 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using four expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <typeparam name="T3">The type containing the fourth property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="expression3">Expression defining the fourth splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <param name="repeat3">Number of times to repeat the fourth splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2, T3>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, Expression<Func<T3, object>> expression3, int repeat = 1, int repeat1 = 1, int repeat2 = 1, int repeat3 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2).SplitOn(expression3, repeat3);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using five expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <typeparam name="T3">The type containing the fourth property to split on</typeparam>
+    /// <typeparam name="T4">The type containing the fifth property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="expression3">Expression defining the fourth splitOn field</param>
+    /// <param name="expression4">Expression defining the fifth splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <param name="repeat3">Number of times to repeat the fourth splitOn field in the resulting string</param>
+    /// <param name="repeat4">Number of times to repeat the fifth splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2, T3, T4>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, Expression<Func<T3, object>> expression3, Expression<Func<T4, object>> expression4, int repeat = 1, int repeat1 = 1, int repeat2 = 1, int repeat3 = 1, int repeat4 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2).SplitOn(expression3, repeat3).SplitOn(expression4, repeat4);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using six expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <typeparam name="T3">The type containing the fourth property to split on</typeparam>
+    /// <typeparam name="T4">The type containing the fifth property to split on</typeparam>
+    /// <typeparam name="T5">The type containing the sixth property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="expression3">Expression defining the fourth splitOn field</param>
+    /// <param name="expression4">Expression defining the fifth splitOn field</param>
+    /// <param name="expression5">Expression defining the sixth splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <param name="repeat3">Number of times to repeat the fourth splitOn field in the resulting string</param>
+    /// <param name="repeat4">Number of times to repeat the fifth splitOn field in the resulting string</param>
+    /// <param name="repeat5">Number of times to repeat the sixth splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2, T3, T4, T5>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, Expression<Func<T3, object>> expression3, Expression<Func<T4, object>> expression4, Expression<Func<T5, object>> expression5, int repeat = 1, int repeat1 = 1, int repeat2 = 1, int repeat3 = 1, int repeat4 = 1, int repeat5 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2).SplitOn(expression3, repeat3).SplitOn(expression4, repeat4).SplitOn(expression5, repeat5);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using seven expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <typeparam name="T3">The type containing the fourth property to split on</typeparam>
+    /// <typeparam name="T4">The type containing the fifth property to split on</typeparam>
+    /// <typeparam name="T5">The type containing the sixth property to split on</typeparam>
+    /// <typeparam name="T6">The type containing the seventh property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="expression3">Expression defining the fourth splitOn field</param>
+    /// <param name="expression4">Expression defining the fifth splitOn field</param>
+    /// <param name="expression5">Expression defining the sixth splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <param name="repeat3">Number of times to repeat the fourth splitOn field in the resulting string</param>
+    /// <param name="repeat4">Number of times to repeat the fifth splitOn field in the resulting string</param>
+    /// <param name="repeat5">Number of times to repeat the sixth splitOn field in the resulting string</param>
+    /// <param name="repeat6">Number of times to repeat the seventh splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2, T3, T4, T5, T6>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, Expression<Func<T3, object>> expression3, Expression<Func<T4, object>> expression4, Expression<Func<T5, object>> expression5, Expression<Func<T6, object>> expression6, int repeat = 1, int repeat1 = 1, int repeat2 = 1, int repeat3 = 1, int repeat4 = 1, int repeat5 = 1, int repeat6 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2).SplitOn(expression3, repeat3).SplitOn(expression4, repeat4).SplitOn(expression5, repeat5).SplitOn(expression6, repeat6);
+    }
+
+    /// <summary>
+    /// Sets the splitOn parameter for the query using eight expressions
+    /// </summary>
+    /// <typeparam name="T">The type containing the first property to split on</typeparam>
+    /// <typeparam name="T1">The type containing the second property to split on</typeparam>
+    /// <typeparam name="T2">The type containing the third property to split on</typeparam>
+    /// <typeparam name="T3">The type containing the fourth property to split on</typeparam>
+    /// <typeparam name="T4">The type containing the fifth property to split on</typeparam>
+    /// <typeparam name="T5"></typeparam>
+    /// <typeparam name="T6">The type containing the sixth property to split on</typeparam>
+    /// <typeparam name="T7">The type containing the seventh property to split on</typeparam>
+    /// <param name="expression">Expression defining the first splitOn field</param>
+    /// <param name="expression1">Expression defining the second splitOn field</param>
+    /// <param name="expression2">Expression defining the third splitOn field</param>
+    /// <param name="expression3">Expression defining the fourth splitOn field</param>
+    /// <param name="expression4">Expression defining the fifth splitOn field</param>
+    /// <param name="expression5">Expression defining the sixth splitOn field</param>
+    /// <param name="expression6">Expression defining the seventh splitOn field</param>
+    /// <param name="expression7">Expression defining the eighth splitOn field</param>
+    /// <param name="repeat">Number of times to repeat the first splitOn field in the resulting string</param>
+    /// <param name="repeat1">Number of times to repeat the second splitOn field in the resulting string</param>
+    /// <param name="repeat2">Number of times to repeat the third splitOn field in the resulting string</param>
+    /// <param name="repeat3">Number of times to repeat the fourth splitOn field in the resulting string</param>
+    /// <param name="repeat4">Number of times to repeat the fifth splitOn field in the resulting string</param>
+    /// <param name="repeat5">Number of times to repeat the sixth splitOn field in the resulting string</param>
+    /// <param name="repeat6">Number of times to repeat the seventh splitOn field in the resulting string</param>
+    /// <param name="repeat7">Number of times to repeat the eighth splitOn field in the resulting string</param>
+    /// <returns>The SqlMapperWrapper instance for method chaining</returns>
+    public SqlMapperWrapper<TReturn, TKey> SplitOn<T, T1, T2, T3, T4, T5, T6, T7>(Expression<Func<T, object>> expression, Expression<Func<T1, object>> expression1, Expression<Func<T2, object>> expression2, Expression<Func<T3, object>> expression3, Expression<Func<T4, object>> expression4, Expression<Func<T5, object>> expression5, Expression<Func<T6, object>> expression6, Expression<Func<T7, object>> expression7, int repeat = 1, int repeat1 = 1, int repeat2 = 1, int repeat3 = 1, int repeat4 = 1, int repeat5 = 1, int repeat6 = 1, int repeat7 = 1)
+    {
+        return SplitOn(expression, repeat).SplitOn(expression1, repeat1).SplitOn(expression2, repeat2).SplitOn(expression3, repeat3).SplitOn(expression4, repeat4).SplitOn(expression5, repeat5).SplitOn(expression6, repeat6).SplitOn(expression7, repeat7);
+    }
+
 
     /// <summary>
     /// Executes the query and maps the results with a single child relationship
