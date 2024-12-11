@@ -342,6 +342,8 @@ connection.CreateMultipleQueryMapper<Customer, int, Address, PhoneNumber>().Conf
 - .NET 7.0+
 
 ## Version History
+- 1.2.4
+    - Add `SplitOn` overload methods multiple generic expression parameters
 - 1.2.3
     - Add `DistinctChildren` method to distinct the children of the parent from `Dapper` query
 - 1.2.2
